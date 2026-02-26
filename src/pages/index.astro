@@ -1,411 +1,335 @@
 ---
-// 引入刚刚分离的数据文件
-import { photos, categories } from "../components/photos.ts";
+// 1. 导入你的数据
+import { foods } from "../components/foods";
+
+// 2. 路径处理函数，自动拼接 Astro 配置的 base URL
+const getImagePath = (path: string) => {
+  const base = import.meta.env.BASE_URL;
+  const cleanBase = base.endsWith("/") ? base : base + "/";
+  const cleanPath = path.startsWith("/") ? path.substring(1) : path;
+  return cleanBase + cleanPath;
+};
 ---
 
-<!doctype html>
 <html lang="zh-CN">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>光影浮生 | 西瓜的摄影展</title>
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <title>美食日记 | ShenWan</title>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700;900&display=swap");
+
       body {
-        /* 使用极深的灰黑色作为摄影展背景，最能凸显照片色彩 */
-        background-color: #0a0a0c;
-        color: #e5e7eb;
-      }
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 4px;
+        font-family: "Noto Serif SC", serif;
+        background-color: #fdfcf9; /* 暖白色背景 */
       }
 
-      /* 隐藏弹窗默认背景 */
+      /* 弹窗背景毛玻璃 */
       dialog::backdrop {
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(6px);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      /* 隐藏滚动条 */
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
       }
     </style>
   </head>
-
-  <body class="min-h-screen antialiased">
-    <main
-      class="max-w-[1400px] mx-auto flex flex-col lg:flex-row py-8 px-4 sm:px-8 gap-8 lg:gap-12"
+  <body class="min-h-screen text-stone-700 antialiased">
+    <nav
+      class="fixed top-6 inset-x-6 z-[100] flex justify-between items-start pointer-events-none"
     >
-      <aside
-        class="lg:w-[340px] flex-shrink-0 flex flex-col lg:sticky lg:top-12 h-fit gap-6"
+      <a
+        href="http://shenwan.life"
+        class="pointer-events-auto group flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 text-stone-600 hover:text-stone-900 no-underline"
       >
-        <div
-          class="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md flex flex-col items-center text-center shadow-2xl relative z-10"
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <div
-            class="w-28 h-28 rounded-full overflow-hidden border-2 border-zinc-700 mb-4 relative group"
-          >
-            <img
-              src="/fooddiary/icons/demo-avatar.png"
-              alt="西瓜"
-              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            />
-          </div>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span class="text-sm font-bold tracking-wide">前往主页</span>
+      </a>
 
-          <h2
-            class="text-3xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-500 dark:from-white dark:to-gray-400"
-          >
-            光影浮生
-          </h2>
-          <p class="text-xs font-mono text-zinc-400 mb-4">@西瓜</p>
-
-          <p class="text-sm text-zinc-300 leading-relaxed mb-6">
-            项目经理 / 独立开发者 / 个人博主<br />
-            <span class="text-zinc-500 text-xs mt-2 block"
-              >"用镜头记录人间烟火，定格那些不经意的瞬间。"</span
-            >
-          </p>
-
-          <div
-            class="w-full h-px bg-gradient-to-r from-transparent via-zinc-700 to-transparent mb-6"
-          >
-          </div>
-
-          <div
-            class="flex items-center gap-2 text-xs font-mono text-zinc-400 bg-black/30 px-3 py-1.5 rounded-full border border-zinc-800 w-full justify-center mb-4"
-          >
-            <i class="fa-solid fa-camera text-zinc-500"></i> Canon EOS 800D
-          </div>
-
-          <a
-            href="http://shenwan.life/"
-            class="w-full py-2.5 rounded-xl bg-white text-black hover:bg-zinc-200 transition-colors text-sm font-bold flex items-center justify-center gap-2"
-          >
-            <i class="fa-solid fa-arrow-left"></i> 前往主站
-          </a>
-        </div>
-
-        <div
-          class="bg-gradient-to-br from-zinc-800/60 to-black/60 border border-white/10 rounded-3xl p-6 backdrop-blur-md flex flex-col items-center text-center shadow-2xl relative overflow-hidden group z-10"
+      <a
+        href="https://github.com/ShenWan0906/FoodDiary"
+        target="_blank"
+        class="pointer-events-auto group flex items-center gap-2.5 bg-stone-800 hover:bg-stone-900 px-5 py-2 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-stone-50 border border-stone-700 no-underline"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="transition-transform duration-300 group-hover:scale-110"
+          viewBox="0 0 16 16"
         >
-          <i
-            class="fa-brands fa-github absolute -bottom-6 -right-6 text-[100px] text-white/5 group-hover:scale-110 group-hover:text-white/10 transition-all duration-500 pointer-events-none"
-          ></i>
+          <path
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+          ></path>
+        </svg>
+        <span class="text-sm font-semibold tracking-wide">GitHub</span>
+      </a>
+    </nav>
 
-          <h3
-            class="text-white font-bold text-base mb-2 flex items-center gap-2 z-10"
-          >
-            <i class="fa-solid fa-code-branch text-zinc-400"></i> 获取画廊源码
-          </h3>
+    <header class="pt-32 pb-16 text-center">
+      <h1
+        class="text-4xl md:text-5xl font-bold mb-6 tracking-[0.2em] text-stone-800 uppercase"
+      >
+        美食日记
+      </h1>
+      <p
+        class="text-stone-400 font-light italic tracking-[0.1em] max-w-lg mx-auto px-4"
+      >
+        记录生活中的每一次美味相遇，用温暖的视角捕捉食物的故事
+      </p>
+    </header>
 
-          <p class="text-xs text-zinc-400 leading-relaxed mb-5 z-10">
-            这个极简光影集已在 GitHub 彻底开源。喜欢这个设计的话，欢迎去赏个
-            Star ⭐️！
-          </p>
-
-          <a
-            href="https://github.com/ShenWan0906/Homepage"
-            target="_blank"
-            class="w-full py-2.5 rounded-xl bg-[#24292F] hover:bg-[#1f2328] border border-zinc-600 hover:border-zinc-500 text-white transition-all text-sm font-bold flex items-center justify-center gap-2 shadow-lg z-10"
-          >
-            <i class="fa-brands fa-github text-lg"></i> 去 GitHub 围观
-          </a>
-        </div>
-      </aside>
-
-      <section class="flex-1 w-full pb-20">
-        <div
-          class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 bg-white/5 border border-white/10 p-2 rounded-2xl backdrop-blur-sm"
-        >
-          <div class="flex flex-wrap items-center gap-1" id="filter-container">
-            {
-              categories.map((cat, index) => (
-                <button
-                  class={`filter-btn px-4 py-1.5 rounded-xl text-sm transition-all ${index === 0 ? "bg-zinc-700 text-white font-bold" : "text-zinc-400 hover:text-white hover:bg-white/10"}`}
-                  data-filter={cat}
-                >
-                  {cat}
-                </button>
-              ))
-            }
-          </div>
-
-          <div
-            class="flex items-center bg-black/40 rounded-xl p-1 border border-zinc-800"
-          >
-            <button
-              class="sort-btn active px-3 py-1.5 rounded-lg text-sm text-white font-bold bg-zinc-800"
-              data-sort="default"
-            >
-              <i class="fa-solid fa-clock mr-1"></i> 最新
-            </button>
-            <button
-              class="sort-btn px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white transition-colors"
-              data-sort="likes"
-            >
-              <i class="fa-solid fa-fire mr-1"></i> 最热
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="columns-1 sm:columns-2 xl:columns-3 gap-6 space-y-6 min-h-[70vh] transition-all duration-300 ease-in-out"
-          id="photo-grid"
-        >
-          {
-            photos.map((photo) => (
+    <main class="max-w-7xl mx-auto pb-24 px-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        {
+          foods.map((food, index) => (
+            <div class="relative">
               <div
-                class="photo-card break-inside-avoid relative group rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 cursor-zoom-in shadow-lg"
-                data-category={photo.category}
-                data-likes={photo.likes}
-                onclick={`openLightbox('${photo.src}', '${photo.title}', '${photo.exif}')`}
+                class="food-card group bg-white rounded-[2rem] overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-700 cursor-pointer border border-stone-50"
+                data-modal-id={`modal_${index}`}
               >
-                <img
-                  src={photo.src}
-                  alt={photo.title}
-                  class="w-full h-auto transform group-hover:scale-[1.03] transition-transform duration-700 will-change-transform"
-                  loading="lazy"
-                />
-
-                <button
-                  class="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-md text-zinc-300 hover:text-red-500 hover:bg-black/60 border border-white/10 transition-all shadow-md"
-                  onclick="event.stopPropagation(); toggleLike(this)"
-                >
-                  <i class="fa-solid fa-heart" />
-                  <span class="text-xs font-mono like-count">
-                    {photo.likes}
-                  </span>
-                </button>
-
-                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5 opacity-100 group-hover:opacity-0 transition-all duration-500 pointer-events-none z-10 flex flex-col justify-end h-1/2">
-                  <div class="flex flex-col translate-y-0 group-hover:translate-y-3 transition-transform duration-500">
-                    <div class="mb-1.5 flex items-center gap-2">
-                      <span class="px-2 py-0.5 rounded text-[10px] bg-white/20 text-white backdrop-blur-sm border border-white/10 shadow-sm">
-                        {photo.category}
-                      </span>
-                      <h3 class="text-white font-bold text-lg drop-shadow-md">
-                        {photo.title}
-                      </h3>
+                <div class="relative h-72 overflow-hidden">
+                  <img
+                    src={getImagePath(food.image)}
+                    alt={food.title}
+                    class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                  <div class="absolute top-5 right-5 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] tracking-widest text-stone-500 font-bold shadow-sm">
+                    {food.tags[0]}
+                  </div>
+                </div>
+                <div class="p-8">
+                  <div class="flex justify-between items-start mb-3">
+                    <h2 class="text-2xl font-bold text-stone-800 tracking-tight">
+                      {food.title}
+                    </h2>
+                    <div class="rating rating-xs mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <input
+                          type="radio"
+                          class={`mask mask-star-2 ${i < food.rating ? "bg-[#d4c4b7]" : "bg-stone-100"}`}
+                          checked
+                          disabled
+                        />
+                      ))}
                     </div>
-                    <p class="text-zinc-300 text-xs font-mono mt-1 border-l-2 border-zinc-500/80 pl-2 drop-shadow-md">
-                      {photo.exif}
-                    </p>
+                  </div>
+                  <p class="text-sm text-stone-500 mb-6 font-light leading-relaxed line-clamp-2">
+                    {food.description}
+                  </p>
+
+                  <div class="flex flex-wrap gap-2 mb-8">
+                    {food.tags.map((tag) => (
+                      <span class="bg-[#fcfaf8] border border-stone-100 px-3 py-1 rounded-full text-[10px] text-stone-400 font-medium">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div class="text-[10px] text-stone-300 font-mono italic">
+                    {food.date}
                   </div>
                 </div>
               </div>
-            ))
-          }
-        </div>
 
-        <div id="empty-state" class="hidden text-center py-20 text-zinc-500">
-          <i class="fa-solid fa-camera-rotate text-4xl mb-4 opacity-50"></i>
-          <p>该分类下暂无照片</p>
-        </div>
-      </section>
+              <dialog
+                id={`modal_${index}`}
+                class="modal modal-bottom sm:modal-middle"
+              >
+                <div class="modal-box p-0 bg-white rounded-[2.5rem] max-w-2xl overflow-y-auto max-h-[85vh] shadow-2xl relative scrollbar-hide">
+                  <div class="relative h-80 sm:h-96">
+                    <img
+                      src={getImagePath(food.image)}
+                      class="w-full h-full object-cover cursor-zoom-in zoomable-image transition-opacity hover:opacity-95"
+                      alt={food.title}
+                    />
+                    <div class="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-2 rounded-full text-xs text-stone-600 font-bold tracking-widest uppercase">
+                      {food.tags[0]}
+                    </div>
+                    <form method="dialog">
+                      <button class="btn btn-sm btn-circle absolute right-6 top-6 bg-black/10 hover:bg-black/20 border-none text-white text-lg">
+                        ✕
+                      </button>
+                    </form>
+                  </div>
+
+                  <div class="p-10 sm:p-14">
+                    <div class="mb-10">
+                      <div class="flex items-center gap-4 mb-3">
+                        <h3 class="font-bold text-4xl text-stone-800">
+                          {food.title}
+                        </h3>
+                        <div class="rating rating-sm">
+                          {[...Array(5)].map((_, i) => (
+                            <input
+                              type="radio"
+                              class={`mask mask-star-2 ${i < food.rating ? "bg-[#d4c4b7]" : "bg-stone-100"}`}
+                              checked
+                              disabled
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <p class="text-stone-400 italic text-sm font-light tracking-wide">
+                        {food.date}
+                      </p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 mb-10">
+                      {food.tags.map((tag) => (
+                        <span class="border border-stone-100 bg-[#fcfaf8] px-5 py-1.5 rounded-full text-xs text-stone-500">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div class="space-y-6 mb-12">
+                      <div class="flex items-center gap-4 text-stone-300">
+                        <span class="h-[1px] w-8 bg-current" />
+                        <h4 class="text-[11px] font-bold uppercase tracking-[0.3em]">
+                          故事与风味
+                        </h4>
+                      </div>
+                      <p class="text-stone-500 leading-[2.2] text-[0.95rem] font-light">
+                        {food.description}
+                      </p>
+                    </div>
+
+                    {food.recipe && (
+                      <div class="border-t border-stone-100 pt-10 space-y-12">
+                        <div>
+                          <h4 class="text-xs font-bold text-stone-400 uppercase tracking-[0.3em] mb-6 flex items-center gap-3">
+                            <span class="w-1.5 h-1.5 bg-[#d4c4b7] rounded-full" />{" "}
+                            食材清单
+                          </h4>
+                          <div class="grid grid-cols-2 gap-3">
+                            {food.recipe.ingredients.map((ing) => (
+                              <div class="text-stone-600 text-sm py-2.5 px-4 bg-[#fcfaf8] rounded-xl border border-stone-100/80 font-light">
+                                {ing}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 class="text-xs font-bold text-stone-400 uppercase tracking-[0.3em] mb-8 flex items-center gap-3">
+                            <span class="w-1.5 h-1.5 bg-[#d4c4b7] rounded-full" />{" "}
+                            烹饪步骤
+                          </h4>
+                          <div class="space-y-8">
+                            {food.recipe.steps.map((step, sIndex) => (
+                              <div class="flex gap-5 items-start">
+                                <span class="flex-none w-6 h-6 rounded-full border border-stone-200 text-stone-400 text-[11px] flex items-center justify-center font-mono mt-0.5">
+                                  {sIndex + 1}
+                                </span>
+                                <p class="text-stone-600 text-sm leading-[2] font-light pt-0.5">
+                                  {step}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div class="bg-[#fdfcf9] p-8 rounded-[2rem] border border-stone-100 relative">
+                          <div class="absolute -top-3 left-8 bg-[#fdfcf9] px-2 text-stone-400 text-xs tracking-widest font-bold">
+                            TIPS
+                          </div>
+                          <p class="text-stone-500 text-sm leading-relaxed font-light italic mt-2">
+                            {food.recipe.tips}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <form method="dialog" class="modal-backdrop">
+                  <button>close</button>
+                </form>
+              </dialog>
+            </div>
+          ))
+        }
+      </div>
     </main>
 
-    <dialog
-      id="lightbox"
-      class="m-0 w-full h-full max-w-none max-h-none bg-transparent"
-    >
-      <div
-        class="flex flex-col items-center justify-center w-full h-full p-4 relative cursor-zoom-out"
-        onclick="closeLightbox(event)"
-      >
-        <div
-          class="absolute top-4 left-0 right-0 px-6 flex justify-between items-center z-50"
-        >
-          <div class="text-white">
-            <h3
-              id="lb-title"
-              class="text-xl font-bold shadow-black drop-shadow-lg"
-            >
-            </h3>
-            <p
-              id="lb-exif"
-              class="text-sm font-mono text-zinc-300 shadow-black drop-shadow-lg mt-1"
-            >
-            </p>
-          </div>
-          <div class="flex gap-4">
-            <a
-              id="lb-download"
-              href="#"
-              download
-              class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md flex items-center justify-center transition-colors border border-white/20 cursor-pointer"
-              title="下载原图"
-            >
-              <i class="fa-solid fa-download"></i>
-            </a>
-            <button
-              class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md flex items-center justify-center transition-colors border border-white/20 cursor-pointer"
-              title="关闭"
-            >
-              <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-          </div>
-        </div>
+    <footer class="py-16 text-center">
+      <div class="h-px w-12 bg-stone-200 mx-auto mb-8"></div>
+      <p class="text-stone-400 text-[10px] tracking-[0.4em] uppercase">
+        &copy; 2026 SHENWAN.LIFE
+      </p>
+    </footer>
 
+    <dialog id="image_viewer" class="modal">
+      <div
+        class="modal-box max-w-5xl p-0 bg-transparent shadow-none relative overflow-hidden flex justify-center items-center"
+      >
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle absolute right-4 top-4 bg-black/40 hover:bg-black/60 border-none text-white text-lg z-50"
+            >✕</button
+          >
+        </form>
         <img
-          id="lb-img"
+          id="viewer_img"
           src=""
-          class="max-w-[95vw] max-h-[90vh] object-contain rounded-lg shadow-2xl pointer-events-none"
+          class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
         />
       </div>
+      <form method="dialog" class="modal-backdrop">
+        <button class="cursor-zoom-out">close</button>
+      </form>
     </dialog>
 
-    <script is:inline>
-      // 1. Lightbox (画中画) 逻辑
-      const dialog = document.getElementById("lightbox");
-      const lbImg = document.getElementById("lb-img");
-      const lbTitle = document.getElementById("lb-title");
-      const lbExif = document.getElementById("lb-exif");
-      const lbDownload = document.getElementById("lb-download");
-
-      function openLightbox(src, title, exif) {
-        lbImg.src = src;
-        lbTitle.innerText = title;
-        lbExif.innerText = exif;
-        // 简单实现下载：将 href 指向图片源
-        lbDownload.href = src;
-        dialog.showModal();
-      }
-
-      function closeLightbox(event) {
-        // 点击背景或关闭按钮时关闭弹窗
-        if (
-          event.target === dialog ||
-          event.target.closest("div.cursor-zoom-out")
-        ) {
-          dialog.close();
-        }
-      }
-
-      // 2. 分类筛选逻辑 (加入淡入动画优化)
-      const filterBtns = document.querySelectorAll(".filter-btn");
-      const photoCards = document.querySelectorAll(".photo-card");
-      const emptyState = document.getElementById("empty-state");
-
-      filterBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          // 更新按钮样式
-          filterBtns.forEach((b) => {
-            b.classList.remove("bg-zinc-700", "text-white", "font-bold");
-            b.classList.add("text-zinc-400");
+    <script>
+      const setupInteractions = () => {
+        // 1. 卡片详情弹窗逻辑
+        document.querySelectorAll(".food-card").forEach((card) => {
+          card.addEventListener("click", () => {
+            const modalId = card.getAttribute("data-modal-id");
+            const modal = document.getElementById(modalId) as HTMLDialogElement;
+            if (modal) modal.showModal();
           });
-          btn.classList.add("bg-zinc-700", "text-white", "font-bold");
-          btn.classList.remove("text-zinc-400");
+        });
 
-          const targetCat = btn.getAttribute("data-filter");
-          let visibleCount = 0;
+        // 2. 图片点击放大逻辑
+        const viewer = document.getElementById(
+          "image_viewer",
+        ) as HTMLDialogElement;
+        const viewerImg = document.getElementById(
+          "viewer_img",
+        ) as HTMLImageElement;
 
-          photoCards.forEach((card) => {
-            const cardCat = card.getAttribute("data-category");
-
-            // 先去掉之前的动画类
-            card.style.animation = "none";
-
-            if (targetCat === "全部" || cardCat === targetCat) {
-              card.style.display = "block";
-              visibleCount++;
-
-              // 触发浏览器的重绘 (Reflow) 以便重新播放动画
-              card.offsetHeight;
-              // 加入简单的淡入+微上浮动画
-              card.style.animation = "fadeInUp 0.5s ease forwards";
-            } else {
-              card.style.display = "none";
+        document.querySelectorAll(".zoomable-image").forEach((img) => {
+          img.addEventListener("click", (e) => {
+            // 阻止事件冒泡，防止触发外层 dialog 的关闭或其他行为
+            e.stopPropagation();
+            if (viewer && viewerImg) {
+              viewerImg.src = (e.target as HTMLImageElement).src;
+              viewer.showModal();
             }
           });
-
-          // 显示空状态
-          emptyState.style.display = visibleCount === 0 ? "block" : "none";
         });
-      });
+      };
 
-      // 在 JS 里直接注入这个极简的动画 CSS
-      const style = document.createElement("style");
-      style.textContent = `
-            @keyframes fadeInUp {
-                from { opacity: 0; transform: translateY(15px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        `;
-      document.head.appendChild(style);
+      // 初始化
+      setupInteractions();
 
-      // 3. 排序逻辑
-      const sortBtns = document.querySelectorAll(".sort-btn");
-      const photoGrid = document.getElementById("photo-grid");
-
-      sortBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          // 更新按钮样式
-          sortBtns.forEach((b) => {
-            b.classList.remove("bg-zinc-800", "text-white", "font-bold");
-            b.classList.add("text-zinc-400");
-          });
-          btn.classList.add("bg-zinc-800", "text-white", "font-bold");
-          btn.classList.remove("text-zinc-400");
-
-          const sortType = btn.getAttribute("data-sort");
-          const cardsArray = Array.from(photoCards);
-
-          if (sortType === "likes") {
-            // 按点赞数从高到低排序
-            cardsArray.sort((a, b) => {
-              return (
-                parseInt(b.getAttribute("data-likes")) -
-                parseInt(a.getAttribute("data-likes"))
-              );
-            });
-          } else {
-            // 默认排序 (按 DOM 原始顺序恢复，这里简单刷新页面或用 data-index 恢复，为简化直接保留原样)
-            // 实际应用中可以在 photos.ts 里加个 ID，按 ID 排序恢复
-            cardsArray.sort((a, b) => {
-              return 0; // 这里的简化处理：如果需要绝对的“最新”排序，建议在数据层直接按日期排好。
-            });
-          }
-
-          // 重新插入 DOM 以实现排序
-          cardsArray.forEach((card) => photoGrid.appendChild(card));
-        });
-      });
-
-      // 4. 点赞视觉效果模拟
-      function toggleLike(btn) {
-        const icon = btn.querySelector("i");
-        const countSpan = btn.querySelector(".like-count");
-        let count = parseInt(countSpan.innerText);
-
-        if (btn.classList.contains("text-red-500")) {
-          // 取消赞
-          btn.classList.remove("text-red-500");
-          btn.classList.add("text-zinc-300");
-          icon.classList.remove("fa-solid");
-          icon.classList.add("fa-regular"); // 变成空心
-          countSpan.innerText = count - 1;
-        } else {
-          // 点赞
-          btn.classList.remove("text-zinc-300");
-          btn.classList.add("text-red-500");
-          icon.classList.remove("fa-regular");
-          icon.classList.add("fa-solid"); // 变成实心
-          countSpan.innerText = count + 1;
-
-          // 加个小动画
-          icon.style.transform = "scale(1.3)";
-          setTimeout(() => (icon.style.transform = "scale(1)"), 200);
-        }
-      }
+      // 兼容 Astro 视图过渡
+      document.addEventListener("astro:after-swap", setupInteractions);
     </script>
   </body>
 </html>
