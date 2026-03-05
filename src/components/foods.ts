@@ -1,11 +1,19 @@
 // src/constants/foods.ts
 
+// 1. 引入 Astro 内置的图片元数据类型
+import type { ImageMetadata } from 'astro';
+
+// 2. 静态导入你的美食原图
+import imgGanguoniuwa from '../assets/foodimages/ganguoniuwa.jpg';
+import imgGanguoyouyu from '../assets/foodimages/ganguoyouyu.jpg';
+import imgHongshaohuangguyu from '../assets/foodimages/hongshaohuangguyu.jpg';
+
 export interface Food {
   title: string;
   description: string;
   date: string;
   tags: string[];
-  image: string;
+  image: ImageMetadata; // 3. 把 string 改为 ImageMetadata
   rating: number;
   recipe?: {
     ingredients: string[];
@@ -17,11 +25,10 @@ export interface Food {
 export const foods: Food[] = [
   {
     title: "干锅牛蛙",
-    description:
-      "外焦里嫩，麻辣鲜香。牛蛙肉质极为细嫩，搭配脆爽的素菜底料，干锅的热气激发出浓郁的香辣味，越吃越上头。",
+    description: "外焦里嫩，麻辣鲜香。牛蛙肉质极为细嫩，搭配脆爽的素菜底料，干锅的热气激发出浓郁的香辣味，越吃越上头。",
     date: "2026-02-15",
     tags: ["川湘菜", "干锅", "麻辣鲜香"],
-    image: "/foodimages/ganguoniuwa.jpg",
+    image: imgGanguoniuwa, // 4. 直接使用引入的图片变量
     rating: 5,
     recipe: {
       ingredients: [
@@ -43,13 +50,13 @@ export const foods: Food[] = [
   },
   {
     title: "干锅鱿鱼",
-    description:
-      "鲜香脆爽，香辣过瘾。鱿鱼须Q弹有嚼劲，配上洋葱和芹菜的鲜甜，是深夜食堂里下酒的绝对王者。",
+    description: "鲜香脆爽，香辣过瘾。鱿鱼须Q弹有嚼劲，配上洋葱和芹菜的鲜甜，是深夜食堂里下酒的绝对王者。",
     date: "2026-02-20",
     tags: ["海鲜", "干锅", "下酒神菜"],
-    image: "/foodimages/ganguoyouyu.jpg",
+    image: imgGanguoyouyu,
     rating: 4,
     recipe: {
+      // ... 原有代码保持不变
       ingredients: [
         "鲜鱿鱼/鱿鱼须 500g",
         "洋葱半个、青红椒、芹菜",
@@ -68,13 +75,13 @@ export const foods: Food[] = [
   },
   {
     title: "红烧黄骨鱼",
-    description:
-      "肉质极其细嫩，几乎没有难剔的小刺。红烧的做法让鱼肉吸满了浓郁的酱汁，蒜香与酱香交织，鲜美无比，汤汁拌饭绝佳。",
+    description: "肉质极其细嫩，几乎没有难剔的小刺。红烧的做法让鱼肉吸满了浓郁的酱汁，蒜香与酱香交织，鲜美无比，汤汁拌饭绝佳。",
     date: "2026-02-25",
     tags: ["家常菜", "红烧", "鲜嫩无刺"],
-    image: "/foodimages/hongshaohuangguyu.jpg",
+    image: imgHongshaohuangguyu,
     rating: 5,
     recipe: {
+      // ... 原有代码保持不变
       ingredients: [
         "黄骨鱼 4-5条",
         "大蒜一整头（多备点）、葱姜",

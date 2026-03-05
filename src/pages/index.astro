@@ -1,16 +1,11 @@
 ---
-// 1. 导入你的数据
+// 1. 引入 Astro 的图片组件
+import { Image } from 'astro:assets';
+// 2. 导入你的数据
 import { foods } from "../components/foods";
-
-// 2. 路径处理函数，自动拼接 Astro 配置的 base URL
-const getImagePath = (path: string) => {
-  const base = import.meta.env.BASE_URL;
-  const cleanBase = base.endsWith("/") ? base : base + "/";
-  const cleanPath = path.startsWith("/") ? path.substring(1) : path;
-  return cleanBase + cleanPath;
-};
 ---
 
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -37,25 +32,13 @@ const getImagePath = (path: string) => {
     </style>
   </head>
   <body class="min-h-screen text-stone-700 antialiased">
-    <nav
-      class="fixed top-6 inset-x-6 z-[100] flex justify-between items-start pointer-events-none"
-    >
+    <nav class="fixed top-6 inset-x-6 z-[100] flex justify-between items-start pointer-events-none">
       <a
         href="http://shenwan.life"
         class="pointer-events-auto group flex items-center gap-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-stone-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 text-stone-600 hover:text-stone-900 no-underline"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
         <span class="text-sm font-bold tracking-wide">前往主页</span>
       </a>
@@ -65,31 +48,18 @@ const getImagePath = (path: string) => {
         target="_blank"
         class="pointer-events-auto group flex items-center gap-2.5 bg-stone-800 hover:bg-stone-900 px-5 py-2 rounded-full shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 text-stone-50 border border-stone-700 no-underline"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="transition-transform duration-300 group-hover:scale-110"
-          viewBox="0 0 16 16"
-        >
-          <path
-            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-          ></path>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="transition-transform duration-300 group-hover:scale-110" viewBox="0 0 16 16">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
         </svg>
         <span class="text-sm font-semibold tracking-wide">GitHub</span>
       </a>
     </nav>
 
     <header class="pt-32 pb-16 text-center">
-      <h1
-        class="text-4xl md:text-5xl font-bold mb-6 tracking-[0.2em] text-stone-800 uppercase"
-      >
+      <h1 class="text-4xl md:text-5xl font-bold mb-6 tracking-[0.2em] text-stone-800 uppercase">
         美食日记
       </h1>
-      <p
-        class="text-stone-400 font-light italic tracking-[0.1em] max-w-lg mx-auto px-4"
-      >
+      <p class="text-stone-400 font-light italic tracking-[0.1em] max-w-lg mx-auto px-4">
         记录生活中的每一次美味相遇，用温暖的视角捕捉食物的故事
       </p>
     </header>
@@ -103,10 +73,12 @@ const getImagePath = (path: string) => {
                 class="food-card group bg-white rounded-[2rem] overflow-hidden shadow-[0_4px_25px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-700 cursor-pointer border border-stone-50"
                 data-modal-id={`modal_${index}`}
               >
-                <div class="relative h-72 overflow-hidden">
-                  <img
-                    src={getImagePath(food.image)}
+                <div class="relative h-72 overflow-hidden bg-stone-100">
+                  <Image
+                    src={food.image}
                     alt={food.title}
+                    width={600}
+                    format="webp"
                     class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                   <div class="absolute top-5 right-5 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] tracking-widest text-stone-500 font-bold shadow-sm">
@@ -146,16 +118,16 @@ const getImagePath = (path: string) => {
                 </div>
               </div>
 
-              <dialog
-                id={`modal_${index}`}
-                class="modal modal-bottom sm:modal-middle"
-              >
+              <dialog id={`modal_${index}`} class="modal modal-bottom sm:modal-middle">
                 <div class="modal-box p-0 bg-white rounded-[2.5rem] max-w-2xl overflow-y-auto max-h-[85vh] shadow-2xl relative scrollbar-hide">
-                  <div class="relative h-80 sm:h-96">
-                    <img
-                      src={getImagePath(food.image)}
-                      class="w-full h-full object-cover cursor-zoom-in zoomable-image transition-opacity hover:opacity-95"
+                  <div class="relative h-80 sm:h-96 bg-stone-100">
+                    <Image
+                      src={food.image}
                       alt={food.title}
+                      width={1000}
+                      format="webp"
+                      data-raw-src={food.image.src}
+                      class="w-full h-full object-cover cursor-zoom-in zoomable-image transition-opacity hover:opacity-95"
                     />
                     <div class="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-2 rounded-full text-xs text-stone-600 font-bold tracking-widest uppercase">
                       {food.tags[0]}
@@ -274,20 +246,11 @@ const getImagePath = (path: string) => {
     </footer>
 
     <dialog id="image_viewer" class="modal">
-      <div
-        class="modal-box max-w-5xl p-0 bg-transparent shadow-none relative overflow-hidden flex justify-center items-center"
-      >
+      <div class="modal-box max-w-5xl p-0 bg-transparent shadow-none relative overflow-hidden flex justify-center items-center">
         <form method="dialog">
-          <button
-            class="btn btn-sm btn-circle absolute right-4 top-4 bg-black/40 hover:bg-black/60 border-none text-white text-lg z-50"
-            >✕</button
-          >
+          <button class="btn btn-sm btn-circle absolute right-4 top-4 bg-black/40 hover:bg-black/60 border-none text-white text-lg z-50">✕</button>
         </form>
-        <img
-          id="viewer_img"
-          src=""
-          class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl"
-        />
+        <img id="viewer_img" src="" class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl" />
       </div>
       <form method="dialog" class="modal-backdrop">
         <button class="cursor-zoom-out">close</button>
@@ -300,35 +263,31 @@ const getImagePath = (path: string) => {
         document.querySelectorAll(".food-card").forEach((card) => {
           card.addEventListener("click", () => {
             const modalId = card.getAttribute("data-modal-id");
-            const modal = document.getElementById(modalId) as HTMLDialogElement;
-            if (modal) modal.showModal();
+            if(modalId) {
+              const modal = document.getElementById(modalId) as HTMLDialogElement;
+              if (modal) modal.showModal();
+            }
           });
         });
 
         // 2. 图片点击放大逻辑
-        const viewer = document.getElementById(
-          "image_viewer",
-        ) as HTMLDialogElement;
-        const viewerImg = document.getElementById(
-          "viewer_img",
-        ) as HTMLImageElement;
+        const viewer = document.getElementById("image_viewer") as HTMLDialogElement;
+        const viewerImg = document.getElementById("viewer_img") as HTMLImageElement;
 
         document.querySelectorAll(".zoomable-image").forEach((img) => {
           img.addEventListener("click", (e) => {
-            // 阻止事件冒泡，防止触发外层 dialog 的关闭或其他行为
             e.stopPropagation();
             if (viewer && viewerImg) {
-              viewerImg.src = (e.target as HTMLImageElement).src;
+              const targetImg = e.target as HTMLImageElement;
+              // 优先读取 data-raw-src 拿原图，没有则降级使用 src
+              viewerImg.src = targetImg.getAttribute("data-raw-src") || targetImg.src;
               viewer.showModal();
             }
           });
         });
       };
 
-      // 初始化
       setupInteractions();
-
-      // 兼容 Astro 视图过渡
       document.addEventListener("astro:after-swap", setupInteractions);
     </script>
   </body>
