@@ -80,7 +80,7 @@ export const foods: Food[] = [
     tags: ["家常菜", "红烧", "鲜嫩无刺"],
     image: imgHongshaohuangguyu,
     rating: 5,
-    recipe: {
+    recipe: { 
       // ... 原有代码保持不变
       ingredients: [
         "黄骨鱼 4-5条",
